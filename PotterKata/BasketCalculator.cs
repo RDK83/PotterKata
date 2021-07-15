@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PotterKata
 {
@@ -87,6 +85,17 @@ namespace PotterKata
             numberOfBookSetsNeeded = 0;
         }
 
+
+        private IEnumerable<int> OrderBooksInBasket(params int[] basket)
+        {
+            // order the books by their 'ID'
+            var orderedBasket = basket.GroupBy(book => book)
+                .OrderBy(group => group.Key)
+                .SelectMany(book => book);
+
+            return orderedBasket;
+        }
+
         private void CalculateRequiredNumberOfBookSets(params int[] basket)
         {
             // figure out how many booksets we need
@@ -102,16 +111,6 @@ namespace PotterKata
             {
                 bookSets.Add(new BookSet(i));
             }
-        }
-
-        private IEnumerable<int> OrderBooksInBasket(params int[] basket)
-        {
-            // order the books by their 'ID'
-            var orderedBasket = basket.GroupBy(book => book)
-                .OrderBy(group => group.Key)
-                .SelectMany(book => book);
-
-            return orderedBasket;
         }
 
         private void CalculateBookSets(IEnumerable<int> orderedBasket)
