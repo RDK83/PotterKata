@@ -19,21 +19,11 @@ namespace PotterKata
             if(!basket.Any())
                 return finalCost;
 
-            // figure out how many booksets we need
-            numberOfBookSetsNeeded = basket.GroupBy(book => book)
-                .OrderBy(group => group.Key)
-                .Select(group => group.Count()).Max();
+            CalculateRequiredNumberOfBookSets(basket);
 
-            // create all the booksets we need
-            for (int i = 0; i < numberOfBookSetsNeeded; i++)
-            {
-                bookSets.Add(new BookSet(Guid.NewGuid()));
-            }
+            CreateBookSets();
 
-            // order the books by their 'ID'
-            var orderedBasket = basket.GroupBy(book => book)
-                .OrderBy(group => group.Key)
-                .SelectMany(book => book);
+            var orderedBasket = OrderBooksInBasket(basket);
 
             // loop through and find the best set for each book
             foreach(var book in orderedBasket)
@@ -103,6 +93,33 @@ namespace PotterKata
             bookSets.Clear();
             finalCost = 0;
             numberOfBookSetsNeeded = 0;
+        }
+
+        private void CalculateRequiredNumberOfBookSets(params int[] basket)
+        {
+            // figure out how many booksets we need
+            numberOfBookSetsNeeded = basket.GroupBy(book => book)
+                .OrderBy(group => group.Key)
+                .Select(group => group.Count()).Max();
+        }
+
+        private void CreateBookSets()
+        {
+            // create all the booksets we need
+            for (int i = 0; i < numberOfBookSetsNeeded; i++)
+            {
+                bookSets.Add(new BookSet(Guid.NewGuid()));
+            }
+        }
+
+        private IEnumerable<int> OrderBooksInBasket(params int[] basket)
+        {
+            // order the books by their 'ID'
+            var orderedBasket = basket.GroupBy(book => book)
+                .OrderBy(group => group.Key)
+                .SelectMany(book => book);
+
+            return orderedBasket;
         }
 
     }
