@@ -1,0 +1,2 @@
+# PotterKata
+CodingDojo Kata - Potter
