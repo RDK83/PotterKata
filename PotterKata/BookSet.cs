@@ -5,34 +5,36 @@ using System.Text;
 
 namespace PotterKata
 {
-    class BookSet
+    internal class BookSet
     {
         private List<int> books = new List<int>();
-        private const int price = 8;
+        private const decimal price = 8m;
 
-        public BookSet()
+        public BookSet(Guid id)
         {
-
+            Id = id;
         }
         public BookSet(int bookId)
         {
             AddBook(bookId);
         }
 
-        public double CalculateCost()
+        public Guid Id { get; set; }
+
+        public decimal CalculateCost()
         {
             var booksInSet = books.Count;
 
             switch (booksInSet)
             {
                 case 5:
-                    return ((booksInSet * price) *0.75);
+                    return ((booksInSet * price) *0.75m);
                 case 4:
-                    return ((booksInSet * price) * 0.8);
+                    return ((booksInSet * price) * 0.8m);
                 case 3:
-                    return ((booksInSet * price) * 0.9);
+                    return ((booksInSet * price) * 0.9m);
                 case 2:
-                    return ((booksInSet * price) * 0.95);
+                    return ((booksInSet * price) * 0.95m);
                 case 1:
                     return (booksInSet *price);
                 case 0:
@@ -54,6 +56,11 @@ namespace PotterKata
         public void AddBook(int bookId)
         {
             books.Add(bookId);
+        }
+
+        public void RemoveBook(int bookId)
+        {
+            books.Remove(bookId);
         }
 
         public int ReturnCount()

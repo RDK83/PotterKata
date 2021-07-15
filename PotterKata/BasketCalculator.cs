@@ -7,162 +7,103 @@ namespace PotterKata
 {
     public class BasketCalculator
     {
-        public double CalculateBasketCost(params int[] basket)
+        private List<BookSet> bookSets = new List<BookSet>();
+        decimal finalCost;
+        int numberOfBookSetsNeeded;
+
+        public decimal CalculateBasketCost(params int[] basket)
         {
-            double naturalCost = CalculateNaturalBookSetCost(basket);
-            double alternateCost = CalculateAlternateBookSetCost(basket);
+            ResetBasket();
 
-            if (alternateCost < naturalCost)
-                return alternateCost;
+            // if there's no book in the basket just return 0
+            if(!basket.Any())
+                return finalCost;
 
-            return naturalCost;
+            // figure out how many booksets we need
+            numberOfBookSetsNeeded = basket.GroupBy(book => book)
+                .OrderBy(group => group.Key)
+                .Select(group => group.Count()).Max();
+
+            // create all the booksets we need
+            for (int i = 0; i < numberOfBookSetsNeeded; i++)
+            {
+                bookSets.Add(new BookSet(Guid.NewGuid()));
+            }
+
+            // order the books by their 'ID'
+            var orderedBasket = basket.GroupBy(book => book)
+                .OrderBy(group => group.Key)
+                .SelectMany(book => book);
+
+            // loop through and find the best set for each book
+            foreach(var book in orderedBasket)
+            {
+                Guid optmimumBookSetId = Guid.Empty;
+
+                optmimumBookSetId = FindOptimumBooksetForBook(book);
+
+                bookSets.FirstOrDefault(set => set.Id == optmimumBookSetId).AddBook(book);
+            }
+
+            // return final cost
+            return GetBasketTotal();
+
         }
 
         /// <summary>
-        /// Calculates the cost of a basket based on the assumption that filling complete sets is the most heavily discounted
+        /// Figures out the best set to put the book into based on the cost that book will add to the bookset
         /// </summary>
-        /// <param name="basket"></param>
+        /// <param name="bookId"></param>
         /// <returns></returns>
-        private double CalculateNaturalBookSetCost(params int[] basket)
+        private Guid FindOptimumBooksetForBook(int bookId)
         {
-            var bookSets = new List<BookSet>();
-            double totalCost = 0;
+            decimal predictedCostForThisSetIfBookIsAdded = decimal.MaxValue;
+            decimal currentSetPriceForThisBook = decimal.MaxValue;
+            decimal lowestPriceOfferedForThisBook = decimal.MaxValue;
+            Guid optimumBookSetId = Guid.Empty;
 
-            if (bookSets.Count == 0)
-                bookSets.Add(new BookSet());
-
-            foreach (var bookId in basket)
+            foreach(var set in bookSets)
             {
-                bool bookAdded = false;
-
-                for (int i = 0; i < bookSets.Count; i++)
+                if(set.CanAddBook(bookId))
                 {
-                    // if we cant add the book to this set, check the next one
-                    if (!bookSets[i].CanAddBook(bookId))
-                        continue;
-                    // otherwise add the book to this set and break out of this loop
-                    if (bookSets[i].CanAddBook(bookId))
-                    {
-                        bookSets[i].AddBook(bookId);
-                        bookAdded = true;
-                        break;
-                    }
+                    set.AddBook(bookId);
+                    predictedCostForThisSetIfBookIsAdded = set.CalculateCost();
+                    set.RemoveBook(bookId);
                 }
 
-                // if the book wasnt added to any existing sets, create a new one and add the book
-                if (!bookAdded)
+                currentSetPriceForThisBook = predictedCostForThisSetIfBookIsAdded - set.CalculateCost();
+
+
+                // if this is the best price offered for this book, this current set is the best home for the book and updated the lowestOfferedPrice
+                if (currentSetPriceForThisBook < lowestPriceOfferedForThisBook)
                 {
-                    bookSets.Add(new BookSet(bookId));
-                    continue;
+                    optimumBookSetId = set.Id;
+                    lowestPriceOfferedForThisBook = currentSetPriceForThisBook;
                 }
+
             }
+
+            return optimumBookSetId;
+        }
+
+        private decimal GetBasketTotal()
+        {
+            finalCost = 0;
 
             foreach (var set in bookSets)
             {
-                totalCost += set.CalculateCost();
+                finalCost += set.CalculateCost();
             }
 
-            return totalCost;
+            return finalCost;
         }
 
-
-        /// <summary>
-        /// Calculates the cost of a basket based on the assumption that filling complete sets is the most heavily discounted
-        /// </summary>
-        /// <param name="basket"></param>
-        /// <returns></returns>
-        private double CalculateAlternateBookSetCost(params int[] basket)
+        private void ResetBasket()
         {
-            var bookSets = new List<BookSet>(){ new BookSet() };
-
-            foreach (var bookId in basket)
-            {
-                bool bookAdded = false;
-                bool protectBookSetIfPossible = false;
-
-                for (int i = 0; i < bookSets.Count; i++)
-                {
-                    // if we already have 4 books in the set, we want to try to keep it that way
-                    if (bookSets[i].ReturnCount() == 4)
-                        protectBookSetIfPossible = true;
-
-                    // if we cant add the book to this set, check the next one
-                    if (!bookSets[i].CanAddBook(bookId))
-                        continue;
-
-                    // if this bookSet isnt a protected set of 4 already, add the book if it fits
-                    if (bookSets[i].CanAddBook(bookId) && !protectBookSetIfPossible)
-                    {
-                        bookSets[i].AddBook(bookId);
-                        bookAdded = true;
-                        break;
-                    }
-                    
-
-                    // if we get to here, then all previous bookSets either
-                    // already have this book
-                    // or already have 4 books in, so we're trying not to put a 5th book in
-
-                    // if there are any bookSets that can accept this book, lets try to fit it in
-                    if (bookSets.Any(b => !b.ContainsBook(bookId)))
-                    {
-                        // there is at least one bookset with space for this book
-                        for (int j = i; j < bookSets.Count; j++)
-                        {
-                            protectBookSetIfPossible = false;
-
-                            // try not to use this set but if we have to, we will later...
-                            if (bookSets[j].ReturnCount() == 4)
-                                protectBookSetIfPossible = true;
-
-
-                            if (bookSets[j].CanAddBook(bookId) && !protectBookSetIfPossible)
-                            {
-                                bookSets[j].AddBook(bookId);
-                                bookAdded = true;
-                                break;
-                            }
-                            if (bookAdded)
-                                break;
-                        }
-                    }
-
-                    // if we still havent managed to add the book to somewhere, just stick it in anywhere it will fit
-                    if (!bookAdded)
-                    {
-                        for (int k = 0; k < bookSets.Count; k++)
-                        {
-                            if (bookSets[k].CanAddBook(bookId))
-                            {
-                                bookSets[k].AddBook(bookId);
-                                bookAdded = true;
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                }
-
-                // if the book wasnt added to any existing sets, create a new one and add the book
-                if (!bookAdded)
-                {
-                    bookSets.Add(new BookSet(bookId));
-                    continue;
-                }
-            }
-
-            double totalCost = 0;
-            // add up the costs of each set
-            foreach (var set in bookSets)
-            {
-                totalCost += set.CalculateCost();
-            }
-
-            return totalCost;
-
+            bookSets.Clear();
+            finalCost = 0;
+            numberOfBookSetsNeeded = 0;
         }
-
-
 
     }
 }

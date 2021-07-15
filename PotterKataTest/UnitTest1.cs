@@ -9,11 +9,11 @@ namespace PotterKataTest
     {
         private static BasketCalculator basketCalculator = new BasketCalculator();
 
-        private const double price = 8;
-        private const double twoBookDiscount = 0.95;
-        private const double threeBookDiscount = 0.90;
-        private const double fourBookDiscount = 0.80;
-        private const double fiveBookDiscount = 0.75;
+        private const decimal price = 8m;
+        private const decimal twoBookDiscount = 0.95m;
+        private const decimal threeBookDiscount = 0.90m;
+        private const decimal fourBookDiscount = 0.80m;
+        private const decimal fiveBookDiscount = 0.75m;
 
         [TestMethod]
         public void No_Book_Costs_0()
@@ -90,15 +90,15 @@ namespace PotterKataTest
         }
 
         [TestMethod]
-        public void Test_Basket_Costs_30_4jk0()
+        public void Test_Basket_Costs_38_80()
         {
             Assert.AreEqual((price * 4 * fourBookDiscount) + (price * 2 * twoBookDiscount), basketCalculator.CalculateBasketCost(0, 0, 1, 2, 2, 3));
         }
 
         [TestMethod]
-        public void Test_Basket_Costs_30_hjk40()
+        public void Test_Basket_Costs_38()
         {
-            Assert.AreEqual(8 + (8 * 5 * 0.75), basketCalculator.CalculateBasketCost(0, 1, 1, 2, 3, 4));
+            Assert.AreEqual(8 + (8 * 5 * fiveBookDiscount), basketCalculator.CalculateBasketCost(0, 1, 1, 2, 3, 4));
         }
 
         [TestMethod]
@@ -114,15 +114,10 @@ namespace PotterKataTest
         }
 
         [TestMethod]
-        public void Test_Basket_Costs_I_have_no_idea_but_its_ridiculous()
+        public void Test_Basket_Costs_359_20()
         {
-            Assert.AreEqual(3 * (price * 5 * fiveBookDiscount) + 2 * (price * 4 * fourBookDiscount), basketCalculator.CalculateBasketCost(0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 2, 2, 2,2,2,2, 2, 3, 3,3,3,3,3,3, 3, 3, 3, 4, 4, 4, 4,4));
+            Assert.AreEqual(359.20m, basketCalculator.CalculateBasketCost(0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 2, 2, 2,2,2,2, 2, 3, 3,3,3,3,3,3, 3, 3, 3, 4, 4, 4, 4,4));
         }
 
-        // 12 * 0
-        // 20 * 1
-        // 7 * 2
-        // 10 * 3
-        // 5 * 4
     }
 }
