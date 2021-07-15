@@ -8,10 +8,10 @@ namespace PotterKata
     public class BasketCalculator
     {
         private List<BookSet> bookSets = new List<BookSet>();
-        decimal finalCost;
-        int numberOfBookSetsNeeded;
+        private decimal finalCost;
+        private int numberOfBookSetsNeeded;
 
-        public decimal CalculateBasketCost(params int[] basket)
+        public decimal GetBasketCost(params int[] basket)
         {
             ResetBasket();
 
@@ -25,15 +25,7 @@ namespace PotterKata
 
             var orderedBasket = OrderBooksInBasket(basket);
 
-            // loop through and find the best set for each book
-            foreach(var book in orderedBasket)
-            {
-                Guid optmimumBookSetId = Guid.Empty;
-
-                optmimumBookSetId = FindOptimumBooksetForBook(book);
-
-                bookSets.FirstOrDefault(set => set.Id == optmimumBookSetId).AddBook(book);
-            }
+            CalculateBookSets(orderedBasket);
 
             // return final cost
             return GetBasketTotal();
@@ -45,12 +37,12 @@ namespace PotterKata
         /// </summary>
         /// <param name="bookId"></param>
         /// <returns></returns>
-        private Guid FindOptimumBooksetForBook(int bookId)
+        private int FindOptimumBooksetForBook(int bookId)
         {
             decimal predictedCostForThisSetIfBookIsAdded = decimal.MaxValue;
             decimal currentSetPriceForThisBook = decimal.MaxValue;
             decimal lowestPriceOfferedForThisBook = decimal.MaxValue;
-            Guid optimumBookSetId = Guid.Empty;
+            int optimumBookSetId = -1;
 
             foreach(var set in bookSets)
             {
@@ -64,7 +56,7 @@ namespace PotterKata
                 currentSetPriceForThisBook = predictedCostForThisSetIfBookIsAdded - set.CalculateCost();
 
 
-                // if this is the best price offered for this book, this current set is the best home for the book and updated the lowestOfferedPrice
+                // if this is the best price offered for this book, this current set is the best home for the book and update the lowestOfferedPrice
                 if (currentSetPriceForThisBook < lowestPriceOfferedForThisBook)
                 {
                     optimumBookSetId = set.Id;
@@ -108,7 +100,7 @@ namespace PotterKata
             // create all the booksets we need
             for (int i = 0; i < numberOfBookSetsNeeded; i++)
             {
-                bookSets.Add(new BookSet(Guid.NewGuid()));
+                bookSets.Add(new BookSet(i));
             }
         }
 
@@ -120,6 +112,18 @@ namespace PotterKata
                 .SelectMany(book => book);
 
             return orderedBasket;
+        }
+
+        private void CalculateBookSets(IEnumerable<int> orderedBasket)
+        {
+            foreach (var book in orderedBasket)
+            {
+                int optmimumBookSetId;
+
+                optmimumBookSetId = FindOptimumBooksetForBook(book);
+
+                bookSets.FirstOrDefault(set => set.Id == optmimumBookSetId).AddBook(book);
+            }
         }
 
     }

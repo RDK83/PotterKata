@@ -10,16 +10,13 @@ namespace PotterKata
         private List<int> books = new List<int>();
         private const decimal price = 8m;
 
-        public BookSet(Guid id)
+        public BookSet(int id)
         {
             Id = id;
         }
-        public BookSet(int bookId)
-        {
-            AddBook(bookId);
-        }
 
-        public Guid Id { get; set; }
+
+        public int Id { get; set; }
 
         public decimal CalculateCost()
         {

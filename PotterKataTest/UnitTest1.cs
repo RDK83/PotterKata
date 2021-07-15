@@ -18,61 +18,61 @@ namespace PotterKataTest
         [TestMethod]
         public void No_Book_Costs_0()
         {
-            Assert.AreEqual(0 * price, basketCalculator.CalculateBasketCost());
+            Assert.AreEqual(0 * price, basketCalculator.GetBasketCost());
         }
 
         [TestMethod]
         public void One_Book_Costs_8()
         {
-            Assert.AreEqual(price, basketCalculator.CalculateBasketCost(0));
+            Assert.AreEqual(price, basketCalculator.GetBasketCost(0));
         }
 
         [TestMethod]
         public void Two_Distinct_Book_Costs_15_2()
         {
-            Assert.AreEqual(price * 2 * twoBookDiscount, basketCalculator.CalculateBasketCost(0,1));
+            Assert.AreEqual(price * 2 * twoBookDiscount, basketCalculator.GetBasketCost(0,1));
         }
 
         [TestMethod]
         public void Two_Same_Book_Costs_16()
         {
-            Assert.AreEqual(price * 2, basketCalculator.CalculateBasketCost(0,0));
+            Assert.AreEqual(price * 2, basketCalculator.GetBasketCost(0,0));
         }
 
         [TestMethod]
         public void Three_Distinct_Book_Costs_21_6()
         {
-            Assert.AreEqual(price * 3 * threeBookDiscount, basketCalculator.CalculateBasketCost(0,1,2));
+            Assert.AreEqual(price * 3 * threeBookDiscount, basketCalculator.GetBasketCost(0,1,2));
         }
 
         [TestMethod]
         public void Three_Same_Book_Costs_24()
         {
-            Assert.AreEqual(price * 3, basketCalculator.CalculateBasketCost(0,0,0));
+            Assert.AreEqual(price * 3, basketCalculator.GetBasketCost(0,0,0));
         }
 
         [TestMethod]
         public void Four_Distinct_Book_Costs_25_6()
         {
-            Assert.AreEqual(price * 4 * fourBookDiscount, basketCalculator.CalculateBasketCost(0,1,2,3));
+            Assert.AreEqual(price * 4 * fourBookDiscount, basketCalculator.GetBasketCost(0,1,2,3));
         }
 
         [TestMethod]
         public void Four_Same_Book_Costs_32()
         {
-            Assert.AreEqual(price * 4, basketCalculator.CalculateBasketCost(0, 0, 0, 0));
+            Assert.AreEqual(price * 4, basketCalculator.GetBasketCost(0, 0, 0, 0));
         }
 
         [TestMethod]
         public void Five_Distinct_Book_Costs_30()
         {
-            Assert.AreEqual(price * 5 * fiveBookDiscount, basketCalculator.CalculateBasketCost(0, 1 , 2, 3, 4));
+            Assert.AreEqual(price * 5 * fiveBookDiscount, basketCalculator.GetBasketCost(0, 1 , 2, 3, 4));
         }
 
         [TestMethod]
         public void Two_Sets_of_Two_Distinct_Book_Costs_()
         {
-            Assert.AreEqual(((price * 3 * threeBookDiscount)+price), basketCalculator.CalculateBasketCost(0, 1, 0, 2));
+            Assert.AreEqual(((price * 3 * threeBookDiscount)+price), basketCalculator.GetBasketCost(0, 1, 0, 2));
         }
 
 
@@ -80,43 +80,43 @@ namespace PotterKataTest
         [TestMethod]
         public void Test_Basket_Costs_23_20()
         {
-            Assert.AreEqual((price * 2 * twoBookDiscount) + price, basketCalculator.CalculateBasketCost(0, 0, 1));
+            Assert.AreEqual((price * 2 * twoBookDiscount) + price, basketCalculator.GetBasketCost(0, 0, 1));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_30_40()
         {
-            Assert.AreEqual((price * 2 * twoBookDiscount) * 2, basketCalculator.CalculateBasketCost(0, 0, 1, 1));
+            Assert.AreEqual((price * 2 * twoBookDiscount) * 2, basketCalculator.GetBasketCost(0, 0, 1, 1));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_38_80()
         {
-            Assert.AreEqual((price * 4 * fourBookDiscount) + (price * 2 * twoBookDiscount), basketCalculator.CalculateBasketCost(0, 0, 1, 2, 2, 3));
+            Assert.AreEqual((price * 4 * fourBookDiscount) + (price * 2 * twoBookDiscount), basketCalculator.GetBasketCost(0, 0, 1, 2, 2, 3));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_38()
         {
-            Assert.AreEqual(8 + (8 * 5 * fiveBookDiscount), basketCalculator.CalculateBasketCost(0, 1, 1, 2, 3, 4));
+            Assert.AreEqual(8 + (8 * 5 * fiveBookDiscount), basketCalculator.GetBasketCost(0, 1, 1, 2, 3, 4));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_51_20()
         {
-            Assert.AreEqual((price * 4 * fourBookDiscount)*2, basketCalculator.CalculateBasketCost(0, 0, 1, 1, 2, 2, 3, 4));
+            Assert.AreEqual((price * 4 * fourBookDiscount)*2, basketCalculator.GetBasketCost(0, 0, 1, 1, 2, 2, 3, 4));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_141_20()
         {
-            Assert.AreEqual(3 * (price * 5 * fiveBookDiscount) + 2 * (price * 4 * fourBookDiscount), basketCalculator.CalculateBasketCost(0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4));
+            Assert.AreEqual(3 * (price * 5 * fiveBookDiscount) + 2 * (price * 4 * fourBookDiscount), basketCalculator.GetBasketCost(0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4));
         }
 
         [TestMethod]
         public void Test_Basket_Costs_359_20()
         {
-            Assert.AreEqual(359.20m, basketCalculator.CalculateBasketCost(0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 2, 2, 2,2,2,2, 2, 3, 3,3,3,3,3,3, 3, 3, 3, 4, 4, 4, 4,4));
+            Assert.AreEqual(359.20m, basketCalculator.GetBasketCost(0,0,0,0,0,0,0,0, 0, 0, 0, 0, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 2, 2, 2,2,2,2, 2, 3, 3,3,3,3,3,3, 3, 3, 3, 4, 4, 4, 4,4));
         }
 
     }
